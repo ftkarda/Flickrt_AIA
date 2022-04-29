@@ -12,28 +12,33 @@ import CardItem from "../components/CardItem";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 import { useState, useEffect } from "react";
 import axios from "axios";
+import Grid from "@mui/material/Grid";
 
 const theme = createTheme();
 
 export default function Home() {
-    const [loading, setLoading] = useState(true);
-    const [data, setData] = useState([])
+  const [loading, setLoading] = useState(true);
+  const [data, setData] = useState([]);
 
   useEffect(() => {
-    const fetchData = async () =>{
+    const fetchData = async () => {
       setLoading(true);
       try {
-        const response = await axios.get('http://localhost:3000/');
-        console.log(response.data);
+        const { data: response } = await axios.get("http://localhost:3000/");
+        console.log(response);
         setData(response);
       } catch (error) {
         console.error(error.message);
       }
       setLoading(false);
-    }
+    };
 
     fetchData();
   }, []);
+
+  if (loading === true) {
+    return <div>Loading...</div>;
+  }
 
   return (
     <ThemeProvider theme={theme}>
@@ -71,9 +76,7 @@ export default function Home() {
               color="text.secondary"
               paragraph
             >
-              Something short and leading about the collection below—its
-              contents, the creator, etc. Make it short and sweet, but not too
-              short so folks don&apos;t simply skip over it entirely.
+             {data.title}
             </Typography>
             <Stack
               sx={{ pt: 4 }}
@@ -81,12 +84,13 @@ export default function Home() {
               spacing={2}
               justifyContent="center"
             >
-              <Button variant="contained">Main call to action</Button>
-              <Button variant="outlined">Secondary action</Button>
             </Stack>
           </Container>
         </Box>
-        <CardItem></CardItem>
+
+        {data.items.map((item, index) => {
+          return <CardItem key={index} data={item} />;
+        })}
       </main>
     </ThemeProvider>
   );
