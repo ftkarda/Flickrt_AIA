@@ -1,7 +1,6 @@
 import * as React from "react";
 import AppBar from "@mui/material/AppBar";
-// import Button from "@mui/material/Button";
-// import CameraIcon from "@mui/icons-material/PhotoCamera";
+import { NavLink } from "react-router-dom";
 import CssBaseline from "@mui/material/CssBaseline";
 import Stack from "@mui/material/Stack";
 import Box from "@mui/material/Box";
@@ -21,6 +20,153 @@ import IconButton from "@mui/material/IconButton";
 import { useSearchParams } from "react-router-dom";
 
 const theme = createTheme();
+
+export default function Home() {
+  const [loading, setLoading] = useState(true);
+  const [data, setData] = useState([]);
+  const [searchParams, setSearchParams] = useSearchParams("");
+
+  const [page, setPage] = useState(1);
+  const [limit] = useState(8);
+
+  let searchTags = searchParams.get("tags") || "";
+
+  const handleSearch = (event) => {
+    const tags = event.target.value;
+    if (tags) {
+      setSearchParams({ tags });
+    }
+  };
+
+  useEffect(() => {
+    const fetchData = async () => {
+      setLoading(true);
+      try {
+        const { data: response } = await axios.get(
+          `http://localhost:3000/?tags=${searchTags}`
+        );
+        setData(response);
+      } catch (error) {
+        console.error(error.message);
+      }
+      setLoading(false);
+    };
+
+    fetchData({});
+  }, [searchTags]);
+
+  if (loading === true) {
+    return <div className="loader" />;
+  }
+
+  const offset = page * limit - limit;
+  const paginationPosts = data.items.slice(offset, offset + limit);
+
+  const previousHandler = () => {
+    if (page === 1) return;
+    setPage(page - 1);
+  };
+
+  const nextHandler = () => {
+    if (page === Math.ceil(data.items.length / limit)) return;
+    setPage(page + 1);
+  };
+
+  return (
+    <ThemeProvider theme={theme}>
+      <CssBaseline />
+      <AppBar position="relative">
+        <Box sx={{ flexGrow: 1 }}>
+          <AppBar position="static">
+            <Toolbar>
+              <IconButton
+                size="large"
+                edge="start"
+                color="inherit"
+                aria-label="open drawer"
+                sx={{ mr: 2 }}
+              >
+                <MenuIcon />
+              </IconButton>
+              <Typography
+                variant="h6"
+                noWrap
+                component="div"
+                sx={{ flexGrow: 1, display: { xs: "none", sm: "block" } }}
+              >
+                <NavLink
+                  to="/"
+                  className={({ isActive }) => (isActive ? "text-active" : "")}
+                >
+                  Home
+                </NavLink>
+              </Typography>
+              <Search value={searchTags} onClick={handleSearch}>
+                <SearchIconWrapper>
+                  <SearchIcon />
+                </SearchIconWrapper>
+                <StyledInputBase
+                  placeholder="Search…"
+                  inputProps={{ "aria-label": "search" }}
+                />
+              </Search>
+            </Toolbar>
+          </AppBar>
+        </Box>
+      </AppBar>
+      <main>
+        {/* Hero unit */}
+        <Box
+          sx={{
+            bgcolor: "background.paper",
+            pt: 8,
+          }}
+        >
+          <Container maxWidth="sm">
+            <Typography
+              component="h1"
+              variant="h2"
+              align="center"
+              color="text.primary"
+              gutterBottom
+            >
+              Public Feed
+            </Typography>
+            <Typography
+              variant="h5"
+              align="center"
+              color="text.secondary"
+              paragraph
+            >
+              {data.title}
+            </Typography>
+          </Container>
+        </Box>
+        <Container sx={{ py: 8 }} maxWidth="xl">
+          {/* End hero unit */}
+          <Grid container spacing={4}>
+            {paginationPosts.map((item, index) => {
+              return <CardItem key={index} data={item} />;
+            })}
+          </Grid>
+        </Container>
+      </main>
+      <div class="center">
+        <div class="pagination">
+          <button onClick={previousHandler} href="#">
+            &laquo;
+          </button>
+          <button href="#" class="active">
+            {page}
+          </button>
+          <button onClick={nextHandler} href="#">
+            &raquo;
+          </button>
+        </div>
+      </div>
+    </ThemeProvider>
+  );
+}
 
 const Search = styled("div")(({ theme }) => ({
   position: "relative",
@@ -45,6 +191,7 @@ const SearchIconWrapper = styled("div")(({ theme }) => ({
   display: "flex",
   alignItems: "center",
   justifyContent: "center",
+  cursor: "pointer",
 }));
 
 const StyledInputBase = styled(InputBase)(({ theme }) => ({
@@ -63,127 +210,3 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
     },
   },
 }));
-
-export default function Home() {
-  const [loading, setLoading] = useState(true);
-  const [data, setData] = useState([]);
-  const [searchParams, setSearchParams] = useSearchParams("");
-
-  const searchTags = searchParams.get("tags");
-
-  const handleSearch = (event) => {
-    // setSearchParams({
-    //   tags: event.target.value
-    // })
-    const tags = event.target.value;
-    if (tags) {
-      setSearchParams({ tags });
-    } 
-  };
-
-  useEffect(() => {
-    const fetchData = async () => {
-      setLoading(true);
-      try {
-        const { data: response } = await axios.get(
-          `http://localhost:3000/?tags=${searchTags}`
-        );
-        console.log(response);
-        setData(response);
-      } catch (error) {
-        console.error(error.message);
-      }
-      setLoading(false);
-    };
-
-    fetchData({});
-  }, [searchTags]);
-
-  if (loading === true) {
-    return <div>Loading...</div>;
-  }
-
-  return (
-    <ThemeProvider theme={theme}>
-      <CssBaseline />
-      <AppBar position="relative">
-        <Box sx={{ flexGrow: 1 }}>
-          <AppBar position="static">
-            <Toolbar>
-              <IconButton
-                size="large"
-                edge="start"
-                color="inherit"
-                aria-label="open drawer"
-                sx={{ mr: 2 }}
-              >
-                <MenuIcon />
-              </IconButton>
-              <Typography
-                variant="h6"
-                noWrap
-                component="div"
-                sx={{ flexGrow: 1, display: { xs: "none", sm: "block" } }}
-              >
-                MUI
-              </Typography>
-              <Search value={searchTags} onClick={handleSearch}>
-                <SearchIconWrapper>
-                  <SearchIcon />
-                </SearchIconWrapper>
-                <StyledInputBase
-                  placeholder="Search…"
-                  inputProps={{ "aria-label": "search" }}
-                />
-              </Search>
-            </Toolbar>
-          </AppBar>
-        </Box>
-      </AppBar>
-      <main>
-        {/* Hero unit */}
-        <Box
-          sx={{
-            bgcolor: "background.paper",
-            pt: 8,
-            pb: 6,
-          }}
-        >
-          <Container maxWidth="sm">
-            <Typography
-              component="h1"
-              variant="h2"
-              align="center"
-              color="text.primary"
-              gutterBottom
-            >
-              Album layout
-            </Typography>
-            <Typography
-              variant="h5"
-              align="center"
-              color="text.secondary"
-              paragraph
-            >
-              {data.title}
-            </Typography>
-            <Stack
-              sx={{ pt: 4 }}
-              direction="row"
-              spacing={2}
-              justifyContent="center"
-            ></Stack>
-          </Container>
-        </Box>
-        <Container sx={{ py: 8 }} maxWidth="xl">
-          {/* End hero unit */}
-          <Grid container spacing={4}>
-            {data.items.map((item, index) => {
-              return <CardItem key={index} data={item} />;
-            })}
-          </Grid>
-        </Container>
-      </main>
-    </ThemeProvider>
-  );
-}
