@@ -1,7 +1,7 @@
 const router = require("express").Router();
 const Controller = require("../controllers/controller")
 
-router.get("/", Controller.getPhotos)
+router.get("/feeds", Controller.getFeeds)
 
 
 module.exports = router;

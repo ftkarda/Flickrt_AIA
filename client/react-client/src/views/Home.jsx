@@ -153,13 +153,13 @@ export default function Home() {
       </main>
       <div class="center">
         <div class="pagination">
-          <button onClick={previousHandler} href="#">
+          <button onClick={previousHandler}>
             &laquo;
           </button>
           <button href="#" class="active">
             {page}
           </button>
-          <button onClick={nextHandler} href="#">
+          <button onClick={nextHandler}>
             &raquo;
           </button>
         </div>

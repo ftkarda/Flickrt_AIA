@@ -1,7 +1,7 @@
 const axios = require("axios");
 
 class Controller {
-  static async getPhotos(req, res, next) {
+  static async getFeeds(req, res, next) {
     try {
       const { tags } = req.query;
       const response = await axios.get(
