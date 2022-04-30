@@ -2,7 +2,6 @@ import * as React from "react";
 import AppBar from "@mui/material/AppBar";
 import { NavLink } from "react-router-dom";
 import CssBaseline from "@mui/material/CssBaseline";
-import Stack from "@mui/material/Stack";
 import Box from "@mui/material/Box";
 import Toolbar from "@mui/material/Toolbar";
 import Typography from "@mui/material/Typography";
@@ -32,6 +31,7 @@ export default function Home() {
   let searchTags = searchParams.get("tags") || "";
 
   const handleSearch = (event) => {
+    // event.preventDefault();
     const tags = event.target.value;
     if (tags) {
       setSearchParams({ tags });
@@ -43,7 +43,7 @@ export default function Home() {
       setLoading(true);
       try {
         const { data: response } = await axios.get(
-          `http://localhost:3000/?tags=${searchTags}`
+          `http://localhost:3000/feeds/?tags=${searchTags}`
         );
         setData(response);
       } catch (error) {
@@ -151,17 +151,13 @@ export default function Home() {
           </Grid>
         </Container>
       </main>
-      <div class="center">
-        <div class="pagination">
-          <button onClick={previousHandler}>
-            &laquo;
-          </button>
-          <button href="#" class="active">
+      <div className="center">
+        <div className="pagination">
+          <button onClick={previousHandler}>&laquo;</button>
+          <button href="#" className="active">
             {page}
           </button>
-          <button onClick={nextHandler}>
-            &raquo;
-          </button>
+          <button onClick={nextHandler}>&raquo;</button>
         </div>
       </div>
     </ThemeProvider>
