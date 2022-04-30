@@ -1,10 +1,7 @@
 import Card from "@mui/material/Card";
-import CardActions from "@mui/material/CardActions";
 import CardContent from "@mui/material/CardContent";
 import CardMedia from "@mui/material/CardMedia";
-
 import Typography from "@mui/material/Typography";
-import Button from "@mui/material/Button";
 import Grid from "@mui/material/Grid";
 
 export default function CardItem({ data }) {
@@ -18,9 +15,6 @@ export default function CardItem({ data }) {
           </Typography>
           <Typography>{data.tags}</Typography>
         </CardContent>
-        <CardActions>
-          <Button size="small">View</Button>
-        </CardActions>
       </Card>
     </Grid>
   );
