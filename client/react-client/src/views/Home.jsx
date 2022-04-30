@@ -19,6 +19,8 @@ import IconButton from "@mui/material/IconButton";
 import { useSearchParams } from "react-router-dom";
 
 const theme = createTheme();
+const PROD_URL = "https://flickr-server-a5a7c.herokuapp.com/"
+// const DEV_URL = "http://localhost:3000/"
 
 export default function Home() {
   const [loading, setLoading] = useState(true);
@@ -43,7 +45,7 @@ export default function Home() {
       setLoading(true);
       try {
         const { data: response } = await axios.get(
-          `http://localhost:3000/feeds/?tags=${searchTags}`
+          PROD_URL + `feeds/?tags=${searchTags}`
         );
         setData(response);
       } catch (error) {
